@@ -99,3 +99,25 @@ tBodyGyroMean
 tBodyGyroJerkMean
 
 The complete list of variables of each feature vector is available in 'features.txt'
+
+
+
+
+Following steps are done to process data in run_analysis.R
+1. Downloading and unzipping dataset
+2.Merging the training and the test sets to create one data set
+setAllInOne <- rbind(mrg_train, mrg_test)
+3. Extracting only the measurements on the mean and standard deviation for each measurement
+mean_and_std <- (grepl("activityId" , colNames) | 
+                 grepl("subjectId" , colNames) | 
+                 grepl("mean.." , colNames) | 
+                 grepl("std.." , colNames) 
+                 )
+4.Using descriptive activity names to name the activities in the data set:
+setWithActivityNames <- merge(setForMeanAndStd, activityLabels,
+                              by='activityId',
+                              all.x=TRUE)
+5. Creating a second, independent tidy data set with the average of each variable for each activity and each subject:
+secTidySet <- aggregate(. ~subjectId + activityId, setWithActivityNames, mean)
+secTidySet <- secTidySet[order(secTidySet$subjectId, secTidySet$activityId),]
+
